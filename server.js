@@ -12,7 +12,7 @@ const chatRoute = require("./routes/chat");
 app.use("/chat", chatRoute);
 
 app.get("/", (req, res) => {
-  res.send("🚀 Dekiller API PRO funcionando");
+res.send("🚀 VERSION NUEVA ACTIVA 🔥");
 });
 
 const PORT = process.env.PORT || 3001;
