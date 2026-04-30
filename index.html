@@ -65,7 +65,7 @@ async function send() {
   input.value = "";
 
   try {
-    const res = await fetch("http://127.0.0.1:3001/chat", {
+    const res = await fetch("https://dekiller-ai.onrender.com/chat", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
