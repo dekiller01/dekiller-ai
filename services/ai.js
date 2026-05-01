@@ -1,4 +1,4 @@
-
+const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 async function askAI(messages) {
   try {
     const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
