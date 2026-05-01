@@ -70,7 +70,7 @@ async function send() {
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ message })
+      body: JSON.stringify({ message: message })
     });
 
     const data = await res.json();
@@ -78,11 +78,9 @@ async function send() {
     // 🤖 respuesta IA
     chat.innerHTML += `<div class="msg bot">${data.reply}</div>`;
 
-    // scroll automático
-    window.scrollTo(0, document.body.scrollHeight);
-
-  } catch (error) {
-    chat.innerHTML += `<div class="msg bot">Error de conexión</div>`;
+  } catch (err) {
+    chat.innerHTML += `<div class="msg bot">❌ Error conectando con la IA</div>`;
+    console.error(err);
   }
 }
 </script>
