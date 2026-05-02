@@ -1,5 +1,4 @@
-const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
-
+const fetch = require("node-fetch");
 async function askAI(messages) {
   try {
     // 🧠 Prompt del sistema (clave)
