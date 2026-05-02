@@ -2,7 +2,11 @@ const express = require("express");
 const router = express.Router();
 const { askAI } = require("../services/ai");
 const fs = require("fs");
+const path = "memory/memory.json";
 
+if (!fs.existsSync("memory")) {
+  fs.mkdirSync("memory");
+}
 const path = "memory/memory.json";
 
 function loadMemory() {
@@ -22,19 +26,24 @@ router.post("/", async (req, res) => {
     let conversation = loadMemory();
 
     const userMessage = req.body.message;
-
+if (!userMessage) {
+  return res.json({ reply: "⚠️ Escribe algo." });
+}
     // ⚡ comandos
     if (userMessage === "/reset") {
       saveMemory([]);
       return res.json({ reply: "🧠 Memoria borrada." });
     }
 
-    if (userMessage === "/help") {
-      return res.json({
-        reply: "Comandos disponibles: /reset, /help"
-      });
-    }
+if (userMessage === "/help") {
+  return res.json({
+    reply: `📌 Comandos:
+/reset → borra memoria
+/help → ver ayuda
 
+💡 Puedes pedirme código, explicaciones o ayuda técnica.`
+  });
+}
     conversation.push({ role: "user", content: userMessage });
 
     const reply = await askAI(conversation);

@@ -9,6 +9,25 @@
       color: white;
       padding: 20px;
     }
+.code-block {
+  background: #000;
+  color: #0f0;
+  padding: 10px;
+  border-radius: 8px;
+  position: relative;
+  overflow-x: auto;
+}
+
+.code-block button {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background: #333;
+  color: white;
+  border: none;
+  padding: 5px;
+  cursor: pointer;
+}
 
     #chat {
       max-width: 600px;
@@ -76,12 +95,28 @@ async function send() {
     const data = await res.json();
 
     // 🤖 respuesta IA
-    chat.innerHTML += `<div class="msg bot">${data.reply}</div>`;
-
+chat.innerHTML += `<div class="msg bot">${formatMessage(data.reply)}</div>`;
   } catch (err) {
     chat.innerHTML += `<div class="msg bot">❌ Error conectando con la IA</div>`;
     console.error(err);
   }
+}
+function formatMessage(text) {
+  return text.replace(/```([\s\S]*?)```/g, (match, code) => {
+    return `
+      <pre class="code-block">
+        <button onclick="copyCode(this)">Copiar</button>
+        <code>${code.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</code>
+      </pre>
+    `;
+  });
+}
+
+function copyCode(btn) {
+  const code = btn.nextElementSibling.innerText;
+  navigator.clipboard.writeText(code);
+  btn.innerText = "✅ Copiado";
+  setTimeout(() => btn.innerText = "Copiar", 2000);
 }
 </script>
 
