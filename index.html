@@ -2,61 +2,108 @@
 <html>
 <head>
   <title>Dekiller AI</title>
+  <!-- Esto es vital para que no se vea chiquito en el celular -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
   <style>
-    body {
+    /* Diseño a pantalla completa adaptado para móvil */
+    body, html {
+      height: 100%;
+      margin: 0;
+      padding: 0;
       font-family: Arial;
       background: #111;
       color: white;
-      padding: 20px;
+      display: flex;
+      flex-direction: column;
     }
-.code-block {
-  background: #000;
-  color: #0f0;
-  padding: 10px;
-  border-radius: 8px;
-  position: relative;
-  overflow-x: auto;
-}
 
-.code-block button {
-  position: absolute;
-  top: 5px;
-  right: 5px;
-  background: #333;
-  color: white;
-  border: none;
-  padding: 5px;
-  cursor: pointer;
-}
+    h2 {
+      text-align: center;
+      margin: 0;
+      padding: 15px;
+      background: #222;
+      font-size: 20px;
+    }
 
+    /* El chat ocupa el resto de la pantalla y permite scroll */
     #chat {
-      max-width: 600px;
-      margin: auto;
+      flex: 1;
+      overflow-y: auto;
+      width: 100%;
+      padding: 15px;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
     }
 
     .msg {
-      padding: 10px;
-      margin: 5px;
+      padding: 12px;
+      margin: 5px 0;
       border-radius: 10px;
+      max-width: 85%;
+      word-wrap: break-word;
     }
 
     .user {
       background: #2a2a2a;
+      align-self: flex-end;
       text-align: right;
     }
 
     .bot {
       background: #444;
+      align-self: flex-start;
       text-align: left;
     }
 
-    input {
-      width: 70%;
+    /* Contenedor de la barra de texto abajo del todo */
+    #input-container {
+      display: flex;
       padding: 10px;
+      background: #222;
+    }
+
+    input {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 5px;
+      background: #333;
+      color: white;
+      font-size: 16px;
     }
 
     button {
+      padding: 12px 15px;
+      margin-left: 10px;
+      background: #6200ee;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-weight: bold;
+    }
+
+    /* Estilos del bloque de código original */
+    .code-block {
+      background: #000;
+      color: #0f0;
       padding: 10px;
+      border-radius: 8px;
+      position: relative;
+      overflow-x: auto;
+      margin-top: 10px;
+    }
+
+    .code-block button {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      background: #333;
+      color: white;
+      border: none;
+      padding: 5px;
+      cursor: pointer;
+      margin: 0;
     }
   </style>
 </head>
@@ -66,13 +113,23 @@
 
 <div id="chat"></div>
 
-<input id="msg" placeholder="Escribe algo..." />
-<button onclick="send()">Enviar</button>
+<!-- Agrupé el input y el botón en un contenedor -->
+<div id="input-container">
+  <input id="msg" placeholder="Escribe algo..." />
+  <button onclick="send()">Enviar</button>
+</div>
 
 <script>
+// Permite enviar presionando la tecla "Enter" en el celular
+document.getElementById("msg").addEventListener("keypress", function(event) {
+  if (event.key === "Enter") {
+    send();
+  }
+});
+
 async function send() {
   const input = document.getElementById("msg");
-  const message = input.value;
+  const message = input.value.trim();
 
   if (!message) return;
 
@@ -82,6 +139,7 @@ async function send() {
   chat.innerHTML += `<div class="msg user">${message}</div>`;
 
   input.value = "";
+  chat.scrollTop = chat.scrollHeight; // Hace que baje la pantalla automáticamente
 
   try {
     const res = await fetch("https://dekiller-ai.onrender.com/chat", {
@@ -94,14 +152,26 @@ async function send() {
 
     const data = await res.json();
 
-    // 🤖 respuesta IA
-chat.innerHTML += `<div class="msg bot">${formatMessage(data.reply)}</div>`;
+    // 🤖 respuesta IA (acepta data.reply o data.text)
+    chat.innerHTML += `<div class="msg bot">${formatMessage(data.reply || data.text || "Recibido")}</div>`;
+    chat.scrollTop = chat.scrollHeight; // Hace que baje la pantalla al responder
+
+    // 🌉 ¡EL PUENTE CON ANDROID!
+    // Si la IA manda una orden especial, la app la ejecuta
+    if (data.comando && window.AndroidBridge) {
+        window.AndroidBridge.performAction(data.comando, data.paquete || data.data);
+    }
+
   } catch (err) {
     chat.innerHTML += `<div class="msg bot">❌ Error conectando con la IA</div>`;
     console.error(err);
+    chat.scrollTop = chat.scrollHeight;
   }
 }
+
+// Función original para formato de código
 function formatMessage(text) {
+  if (!text) return "";
   return text.replace(/```([\s\S]*?)```/g, (match, code) => {
     return `
       <pre class="code-block">
@@ -112,6 +182,7 @@ function formatMessage(text) {
   });
 }
 
+// Función original para copiar código
 function copyCode(btn) {
   const code = btn.nextElementSibling.innerText;
   navigator.clipboard.writeText(code);
@@ -122,3 +193,4 @@ function copyCode(btn) {
 
 </body>
 </html>
+
