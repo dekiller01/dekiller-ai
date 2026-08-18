@@ -11,8 +11,9 @@ app.use(express.json());
 const chatRoute = require("./routes/chat");
 app.use("/chat", chatRoute);
 
+// AQUÍ ESTÁ LA MAGIA: Le indicamos que envíe tu diseño web
 app.get("/", (req, res) => {
-res.send("🚀 VERSION NUEVA ACTIVA 🔥");
+  res.sendFile(__dirname + "/index.html");
 });
 
 const PORT = process.env.PORT || 3001;
@@ -21,4 +22,4 @@ app.listen(PORT, () => {
   console.log(`🚀 Servidor en puerto ${PORT}`);
   console.log("Node version:", process.version);
 });
-// update
+
