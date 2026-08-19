@@ -8,7 +8,6 @@ if (!fs.existsSync("memory")) {
   fs.mkdirSync("memory");
 }
 
-// ✅ Nombre corregido (evita conflicto con "path")
 const memoryPath = "memory/memory.json";
 
 // 📥 Cargar memoria
@@ -29,14 +28,13 @@ function saveMemory(data) {
 router.post("/", async (req, res) => {
   try {
     let conversation = loadMemory();
-
     const userMessage = req.body.message;
 
     if (!userMessage) {
       return res.json({ reply: "⚠️ Escribe algo." });
     }
 
-    // ⚡ comandos
+    // ⚡ comandos de sistema
     if (userMessage === "/reset") {
       saveMemory([]);
       return res.json({ reply: "🧠 Memoria borrada." });
@@ -44,15 +42,41 @@ router.post("/", async (req, res) => {
 
     if (userMessage === "/help") {
       return res.json({
-        reply: `📌 Comandos:
-/reset → borra memoria
-/help → ver ayuda
-
-💡 Puedes pedirme código, explicaciones o ayuda técnica.`
+        reply: `📌 Comandos:\n/reset → borra memoria\n/help → ver ayuda\n💡 Novedad: Prueba decir "Abre YouTube" o "Abre WhatsApp".`
       });
     }
 
-    // 💬 conversación
+    // 🎯 INTERCEPTOR DE APPS (¡El puente con Android!)
+    const mensajeMinusculas = userMessage.toLowerCase();
+    
+    if (mensajeMinusculas.startsWith("abre ") || mensajeMinusculas.startsWith("abrir ")) {
+      let app = mensajeMinusculas.replace("abre ", "").replace("abrir ", "").trim();
+      let paquete = "";
+
+      // Diccionario de paquetes de Android
+      if (app.includes("youtube")) paquete = "com.google.android.youtube";
+      else if (app.includes("whatsapp")) paquete = "com.whatsapp";
+      else if (app.includes("facebook")) paquete = "com.facebook.katana";
+      else if (app.includes("chrome")) paquete = "com.android.chrome";
+      else if (app.includes("tiktok")) paquete = "com.zhiliaoapp.musically";
+
+      // Si detecta la app, manda el comando oculto a Sketchware
+      if (paquete !== "") {
+        const respuestaApp = `🚀 Ejecutando protocolo: Abriendo ${app}...`;
+        
+        conversation.push({ role: "user", content: userMessage });
+        conversation.push({ role: "assistant", content: respuestaApp });
+        saveMemory(conversation.slice(-10));
+
+        return res.json({ 
+          reply: respuestaApp, 
+          comando: "open_app", 
+          paquete: paquete 
+        });
+      }
+    }
+
+    // 💬 Si no es una orden para abrir apps, la IA responde normal
     conversation.push({ role: "user", content: userMessage });
 
     const reply = await askAI(conversation);
@@ -61,7 +85,6 @@ router.post("/", async (req, res) => {
 
     // 🧠 limitar memoria
     conversation = conversation.slice(-10);
-
     saveMemory(conversation);
 
     res.json({ reply });
@@ -73,3 +96,4 @@ router.post("/", async (req, res) => {
 });
 
 module.exports = router;
+
