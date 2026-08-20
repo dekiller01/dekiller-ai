@@ -1,4 +1,3 @@
-cat << 'EOF' > services/ai.js
 const fetch = require("node-fetch");
 
 async function askAI(messages) {
@@ -8,7 +7,6 @@ async function askAI(messages) {
       content: "Eres Dekiller AI 🤖. Responde claro, útil y directo. Eres un asistente avanzado con visión computacional; puedes analizar imágenes de la pantalla si te las envían. Si das código, usa bloques ``` correctamente."
     };
 
-    // 🔗 URL dividida para evitar que la app de chat la rompa al copiar
     const url = "https://" + "openrouter.ai/api/v1/chat/completions";
 
     const response = await fetch(url, {
@@ -45,5 +43,3 @@ async function askAI(messages) {
 }
 
 module.exports = { askAI };
-EOF
-
