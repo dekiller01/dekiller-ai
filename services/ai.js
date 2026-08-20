@@ -1,3 +1,4 @@
+cat << 'EOF' > services/ai.js
 const fetch = require("node-fetch");
 
 async function askAI(messages) {
@@ -7,7 +8,6 @@ async function askAI(messages) {
       content: "Eres Dekiller AI 🤖. Responde claro, útil y directo. Eres un asistente avanzado con visión computacional; puedes analizar imágenes de la pantalla si te las envían. Si das código, usa bloques ``` correctamente."
     };
 
-    // 🔗 URL absoluta garantizada
     const url = "[https://openrouter.ai/api/v1/chat/completions](https://openrouter.ai/api/v1/chat/completions)";
 
     const response = await fetch(url, {
@@ -19,7 +19,7 @@ async function askAI(messages) {
         "X-Title": "Dekiller AI"
       },
       body: JSON.stringify({
-        model: "openai/gpt-4o-mini", // 👁️ El nuevo cerebro con visión
+        model: "openai/gpt-4o-mini",
         messages: [systemPrompt, ...messages]
       })
     });
@@ -44,4 +44,5 @@ async function askAI(messages) {
 }
 
 module.exports = { askAI };
-
+EOF
+	
