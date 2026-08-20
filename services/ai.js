@@ -2,13 +2,15 @@ const fetch = require("node-fetch");
 
 async function askAI(messages) {
   try {
-    // 🧠 Prompt del sistema actualizado para que sepa que puede ver
     const systemPrompt = {
       role: "system",
-      content: "Eres dekiller AI 🤖. Responde claro, útil y directo. Eres un asistente avanzado con visión computacional; puedes analizar las imágenes de la pantalla del usuario si te las envía. Si das código, usa bloques ``` correctamente. Ayuda en programación, tecnología y dudas."
+      content: "Eres Dekiller AI 🤖. Responde claro, útil y directo. Eres un asistente avanzado con visión computacional; puedes analizar imágenes de la pantalla si te las envían. Si das código, usa bloques ``` correctamente."
     };
 
-    const response = await fetch("[https://openrouter.ai/api/v1/chat/completions](https://openrouter.ai/api/v1/chat/completions)", {
+    // 🔗 URL absoluta garantizada
+    const url = "[https://openrouter.ai/api/v1/chat/completions](https://openrouter.ai/api/v1/chat/completions)";
+
+    const response = await fetch(url, {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY}`,
@@ -17,17 +19,13 @@ async function askAI(messages) {
         "X-Title": "Dekiller AI"
       },
       body: JSON.stringify({
-        // 👁️ Cambiamos a GPT-4o-mini, que tiene visión y es muy rápido
-        model: "openai/gpt-4o-mini", 
+        model: "openai/gpt-4o-mini", // 👁️ El nuevo cerebro con visión
         messages: [systemPrompt, ...messages]
       })
     });
 
     const data = await response.json();
 
-    console.log("Respuesta IA:", JSON.stringify(data, null, 2));
-
-    // 🔍 Manejo de errores de API
     if (data.error) {
       console.error("Error OpenRouter:", data.error);
       return "❌ Error con la API de IA";
