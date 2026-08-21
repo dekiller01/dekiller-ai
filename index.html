@@ -1,181 +1,40 @@
-5<!DOCTYPE html>
+            <!DOCTYPE html>
 <html>
 <head>
   <title>Dekiller AI</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body, html {
-      height: 100%;
-      margin: 0;
-      padding: 0;
-      font-family: Arial;
-      background: #111;
-      color: white;
-      display: flex;
-      flex-direction: column;
-    }
-
-    h2 {
-      text-align: center;
-      margin: 0;
-      padding: 15px;
-      background: #1a1a1a;
-      font-size: 20px;
-      border-bottom: 1px solid #333;
-    }
-
-    #chat {
-      flex: 1;
-      overflow-y: auto;
-      max-width: 600px;
-      width: 100%;
-      margin: 0 auto;
-      padding: 15px;
-      box-sizing: border-box;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .msg {
-      padding: 12px;
-      margin: 6px 0;
-      border-radius: 10px;
-      max-width: 85%;
-      word-wrap: break-word;
-    }
-
-    /* Estilo para las imagenes dentro del chat */
-    .msg img {
-      max-width: 100%;
-      border-radius: 5px;
-      margin-bottom: 5px;
-    }
-
-    .user {
-      background: #2a2a2a;
-      align-self: flex-end;
-      text-align: right;
-    }
-
-    .bot {
-      background: #444;
-      align-self: flex-start;
-      text-align: left;
-    }
-
-    /* Caja de preview de imagen */
-    #image-preview-container {
-      display: none;
-      padding: 10px;
-      background: #1a1a1a;
-      max-width: 600px;
-      width: 100%;
-      margin: 0 auto;
-      box-sizing: border-box;
-      text-align: center;
-      position: relative;
-    }
-
-    #image-preview {
-      max-height: 100px;
-      border-radius: 8px;
-    }
-
-    #remove-btn {
-      position: absolute;
-      top: 15px;
-      right: 20px;
-      background: #ff4444;
-      color: white;
-      border: none;
-      border-radius: 50%;
-      width: 30px;
-      height: 30px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    #input-container {
-      display: flex;
-      padding: 12px;
-      background: #1a1a1a;
-      max-width: 600px;
-      width: 100%;
-      margin: 0 auto;
-      box-sizing: border-box;
-      border-top: 1px solid #333;
-    }
-
-    /* Botón de adjuntar modificado */
-    #attach-btn {
-      padding: 0 15px;
-      background: #333;
-      margin-left: 0;
-      margin-right: 10px;
-      font-size: 20px;
-    }
-
-    input[type="text"] {
-      flex: 1;
-      padding: 12px;
-      border: none;
-      border-radius: 5px;
-      background: #2a2a2a;
-      color: white;
-      font-size: 16px;
-    }
-
-    button {
-      padding: 12px 20px;
-      margin-left: 10px;
-      background: #6200ee;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    .code-block {
-      background: #000;
-      color: #0f0;
-      padding: 10px;
-      border-radius: 8px;
-      position: relative;
-      overflow-x: auto;
-      margin-top: 10px;
-    }
-
-    .code-block button {
-      position: absolute;
-      top: 5px;
-      right: 5px;
-      background: #333;
-      color: white;
-      border: none;
-      padding: 5px;
-      cursor: pointer;
-      margin: 0;
-    }
+    body, html { height: 100%; margin: 0; padding: 0; font-family: Arial; background: #111; color: white; display: flex; flex-direction: column; }
+    h2 { text-align: center; margin: 0; padding: 15px; background: #1a1a1a; font-size: 20px; border-bottom: 1px solid #333; }
+    #chat { flex: 1; overflow-y: auto; max-width: 600px; width: 100%; margin: 0 auto; padding: 15px; box-sizing: border-box; display: flex; flex-direction: column; }
+    .msg { padding: 12px; margin: 6px 0; border-radius: 10px; max-width: 85%; word-wrap: break-word; }
+    .msg img { max-width: 100%; border-radius: 5px; margin-bottom: 5px; }
+    .user { background: #2a2a2a; align-self: flex-end; text-align: right; }
+    .bot { background: #444; align-self: flex-start; text-align: left; }
+    #image-preview-container { display: none; padding: 10px; background: #1a1a1a; max-width: 600px; width: 100%; margin: 0 auto; box-sizing: border-box; text-align: center; position: relative; }
+    #image-preview { max-height: 100px; border-radius: 8px; }
+    #remove-btn { position: absolute; top: 15px; right: 20px; background: #ff4444; color: white; border: none; border-radius: 50%; width: 30px; height: 30px; font-weight: bold; cursor: pointer; }
+    #input-container { display: flex; padding: 12px; background: #1a1a1a; max-width: 600px; width: 100%; margin: 0 auto; box-sizing: border-box; border-top: 1px solid #333; }
+    #attach-btn { padding: 0 15px; background: #333; margin-right: 10px; font-size: 20px; color: white; border: none; border-radius: 5px; cursor: pointer; }
+    input[type="text"] { flex: 1; padding: 12px; border: none; border-radius: 5px; background: #2a2a2a; color: white; font-size: 16px; }
+    button { padding: 12px 20px; margin-left: 10px; background: #6200ee; color: white; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; }
+    .code-block { background: #000; color: #0f0; padding: 10px; border-radius: 8px; position: relative; overflow-x: auto; margin-top: 10px; }
+    .code-block button { position: absolute; top: 5px; right: 5px; background: #333; color: white; border: none; padding: 5px; cursor: pointer; margin: 0; }
   </style>
 </head>
 <body>
 
 <h2>Dekiller AI 🤖</h2>
-
 <div id="chat"></div>
 
-<!-- Contenedor para previsualizar la foto antes de enviarla -->
 <div id="image-preview-container">
   <img id="image-preview" src="" />
   <button id="remove-btn" onclick="removeImage()">X</button>
 </div>
 
 <div id="input-container">
-  <!-- Input oculto de archivos y nuevo botón 📎 -->
-  <input type="file" id="file-input" accept="image/*" style="display: none;" onchange="previewImage(event)">
-  <button id="attach-btn" onclick="document.getElementById('file-input').click()">📎</button>
-  
+  <!-- Botón que llama a Sketchware para abrir galería -->
+  <button id="attach-btn" onclick="window.AndroidBridge.performAction('open_gallery', '')">📎</button>
   <input type="text" id="msg" placeholder="Escribe algo..." />
   <button onclick="send()">Enviar</button>
 </div>
@@ -183,59 +42,35 @@
 <script>
 let base64Image = null;
 
-// Escuchar enter en el teclado
 document.getElementById("msg").addEventListener("keypress", function(event) {
-  if (event.key === "Enter") {
-    send();
-  }
+  if (event.key === "Enter") send();
 });
 
-// Función para mostrar la foto y convertirla a Base64
-function previewImage(event) {
-  const file = event.target.files[0];
-  if (!file) return;
-
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    document.getElementById("image-preview").src = e.target.result;
-    document.getElementById("image-preview-container").style.display = "block";
-    // Extraemos solo el código limpio Base64 (quitamos el encabezado)
-    base64Image = e.target.result.split(',')[1];
-  };
-  reader.readAsDataURL(file);
+// Función que Android llamará cuando tenga la imagen
+function setBase64Image(base64) {
+  base64Image = base64;
+  document.getElementById("image-preview").src = "data:image/jpeg;base64," + base64;
+  document.getElementById("image-preview-container").style.display = "block";
 }
 
-// Función para quitar la foto
 function removeImage() {
   base64Image = null;
-  document.getElementById("image-preview").src = "";
   document.getElementById("image-preview-container").style.display = "none";
-  document.getElementById("file-input").value = "";
 }
 
 async function send() {
   const input = document.getElementById("msg");
   const message = input.value.trim();
-
-  // Evitar envíos vacíos (ahora requiere texto o imagen)
   if (!message && !base64Image) return;
 
   const chat = document.getElementById("chat");
-
-  // Crear la burbuja del usuario (con foto si hay)
   let userHtml = `<div class="msg user">`;
-  if (base64Image) {
-    userHtml += `<img src="data:image/jpeg;base64,${base64Image}" /><br>`;
-  }
-  if (message) {
-    userHtml += message;
-  }
+  if (base64Image) userHtml += `<img src="data:image/jpeg;base64,${base64Image}" /><br>`;
+  if (message) userHtml += message;
   userHtml += `</div>`;
-  
   chat.innerHTML += userHtml;
   chat.scrollTop = chat.scrollHeight;
-
-  // Guardamos datos para enviar y limpiamos interfaz
+  
   const payloadMessage = message;
   const payloadImage = base64Image;
 
@@ -245,26 +80,19 @@ async function send() {
   try {
     const res = await fetch("https://dekiller-ai.onrender.com/chat", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      // Enviamos el texto y la imagen al servidor
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ message: payloadMessage, image: payloadImage })
     });
-
     const data = await res.json();
-
     chat.innerHTML += `<div class="msg bot">${formatMessage(data.reply || data.text || "Recibido")}</div>`;
     chat.scrollTop = chat.scrollHeight;
-
-    // Puente con Android / Sketchware (intacto)
+    
+    // Puente con Android / Sketchware
     if (data.comando && window.AndroidBridge) {
         window.AndroidBridge.performAction(data.comando, data.paquete || data.data);
     }
-
-  } catch (err) {
-    chat.innerHTML += `<div class="msg bot">❌ Error conectando con la IA</div>`;
-    console.error(err);
+  } catch (err) { 
+    chat.innerHTML += `<div class="msg bot">❌ Error conectando con la IA</div>`; 
     chat.scrollTop = chat.scrollHeight;
   }
 }
@@ -272,12 +100,7 @@ async function send() {
 function formatMessage(text) {
   if (!text) return "";
   return text.replace(/```([\s\S]*?)```/g, (match, code) => {
-    return `
-      <pre class="code-block">
-        <button onclick="copyCode(this)">Copiar</button>
-        <code>${code.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</code>
-      </pre>
-    `;
+    return `<pre class="code-block"><button onclick="copyCode(this)">Copiar</button><code>${code.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</code></pre>`;
   });
 }
 
@@ -288,7 +111,5 @@ function copyCode(btn) {
   setTimeout(() => btn.innerText = "Copiar", 2000);
 }
 </script>
-
 </body>
 </html>
-
