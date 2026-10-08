@@ -10,7 +10,9 @@ app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 // conectar rutas
 const chatRoute = require("./routes/chat");
+const pinterestRoute = require("./routes/pinterest");
 app.use("/chat", chatRoute);
+app.use("/pinterest", pinterestRoute);
 
 // AQUÍ ESTÁ LA MAGIA: Le indicamos que envíe tu diseño web
 app.get("/", (req, res) => {

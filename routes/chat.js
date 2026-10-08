@@ -1,4 +1,5 @@
 const express = require("express");
+const fetch = require("node-fetch");
 const router = express.Router();
 const { askAI } = require("../services/ai");
 const fs = require("fs");
@@ -66,6 +67,37 @@ router.post("/", async (req, res) => {
           reply: respuestaApp, 
           comando: "open_app", 
           paquete: paquete 
+        });
+      }
+    }
+
+    // 📌 BÚSQUEDA EN PINTEREST
+    // Interceptamos peticiones explícitas para que no dependan de que el modelo
+    // recuerde una herramienta. La búsqueda devuelve Pins públicos + preview.
+    const pinterestMatch = userMessage.match(/(?:busca|buscar|encuentra|muestra|muéstrame|search|find)\s+(?:en\s+)?pinterest\s+(?:imagenes?\s+(?:de|sobre)\s+)?(.+)/i);
+    if (pinterestMatch) {
+      const query = pinterestMatch[1].trim();
+      try {
+        const pinterestUrl = `http://127.0.0.1:${process.env.PORT || 3001}/pinterest/search?q=${encodeURIComponent(query)}`;
+        const response = await fetch(pinterestUrl);
+        const data = await response.json();
+
+        if (!response.ok) throw new Error(data.error || "Pinterest search failed");
+
+        const reply = data.results.length
+          ? `🔎 Encontré ${data.results.length} resultados de Pinterest para: ${query}`
+          : `🔎 No encontré Pins para: ${query}`;
+
+        conversation.push({ role: "user", content: userMessage });
+        conversation.push({ role: "assistant", content: reply });
+        saveMemory(conversation.slice(-10));
+
+        return res.json({ reply, pinterest: data });
+      } catch (error) {
+        console.error("Pinterest tool:", error);
+        return res.status(502).json({
+          reply: "❌ No pude buscar en Pinterest ahora mismo.",
+          error: "pinterest_unavailable"
         });
       }
     }
