@@ -74,7 +74,7 @@ router.post("/", async (req, res) => {
     // 📌 BÚSQUEDA EN PINTEREST
     // Interceptamos peticiones explícitas para que no dependan de que el modelo
     // recuerde una herramienta. La búsqueda devuelve Pins públicos + preview.
-   const pinterestMatch = userMessage.match(/(?:busca|buscar|encuentra|muestra|muéstrame|search|find)\s+(?:en\s+pinterest\s+(?:(?:imágenes?|imagenes?|fotos?|wallpapers?)\s+(?:de|sobre)\s+)?|(?:imágenes?|imagenes?|fotos?|wallpapers?)\s+(?:de|sobre)\s+)?(.+?)(?:\s+en\s+pinterest)?[.!?]*$/i);
+   const pinterestMatch = userMessage.match(/(?:busca|buscar|encuentra|muestra|muéstrame|dame|enséñame|muestrame|search|find)\s+(?:(?:una?|algunas?)\s+)?(?:(?:imagen(?:es)?|fotos?|wallpapers?)\s+(?:de|sobre)\s+)?(?:en\s+pinterest\s+)?(.+?)(?:\s+(?:de|en)\s+pinterest)?[.!?]*$/i);
     if (pinterestMatch) {
       const query = pinterestMatch[1].trim();
       try {
