@@ -72,17 +72,39 @@ router.post("/", async (req, res) => {
     }
 
     // 📌 BÚSQUEDA EN PINTEREST
-    // Interceptamos peticiones explícitas para que no dependan de que el modelo
-    // recuerde una herramienta. La búsqueda devuelve Pins públicos + preview.
-   const pinterestMatch = userMessage.match(/(?:busca|buscar|encuentra|muestra|muéstrame|dame|enséñame|muestrame|search|find)\s+(?:(?:una?|algunas?)\s+)?(?:(?:imagen(?:es)?|fotos?|wallpapers?)\s+(?:de|sobre)\s+)?(?:en\s+pinterest\s+)?(.+?)(?:\s+(?:de|en)\s+pinterest)?[.!?]*$/i);
+    const pinterestMatch = (() => {
+      const text = userMessage.trim();
+
+      const intent = /^(?:por favor,?\s*)?(?:busca|buscar|encuentra|muestra|muéstrame|muestrame|dame|enséñame|enseñame|search|find)\s+/i;
+
+      if (!intent.test(text)) return null;
+
+      let query = text.replace(intent, "").trim();
+
+      // Quitar Pinterest al principio o al final.
+      query = query.replace(/^en\s+pinterest\s+/i, "");
+      query = query.replace(/\s+(?:de|en)\s+pinterest[.!?]*$/i, "");
+
+      // Quitar palabras que indican que se solicita una imagen.
+      query = query.replace(/^(?:(?:una?|algunas?)\s+)?(?:imágenes?|imagenes?|fotos?|wallpapers?)\s+(?:de|sobre)\s+/i, "");
+      query = query.replace(/^(?:una?|algunas?)\s+(?:imagen|foto)\s+(?:de|sobre)\s+/i, "");
+
+      query = query.replace(/[.!?]+$/, "").trim();
+
+      return query ? { 1: query } : null;
+    })();
+
     if (pinterestMatch) {
-      const query = pinterestMatch[1].trim();
+      const query = pinterestMatch[1];
+
       try {
         const pinterestUrl = `http://127.0.0.1:${process.env.PORT || 3001}/pinterest/search?q=${encodeURIComponent(query)}`;
         const response = await fetch(pinterestUrl);
         const data = await response.json();
 
-        if (!response.ok) throw new Error(data.error || "Pinterest search failed");
+        if (!response.ok) {
+          throw new Error(data.error || "Pinterest search failed");
+        }
 
         const reply = data.results.length
           ? `🔎 Encontré ${data.results.length} resultados de Pinterest para: ${query}`
@@ -95,13 +117,13 @@ router.post("/", async (req, res) => {
         return res.json({ reply, pinterest: data });
       } catch (error) {
         console.error("Pinterest tool:", error);
+
         return res.status(502).json({
           reply: "❌ No pude buscar en Pinterest ahora mismo.",
           error: "pinterest_unavailable"
         });
       }
     }
-
     // 👁️ PREPARAR PAQUETE MULTIMODAL
     let messageContent;
     
